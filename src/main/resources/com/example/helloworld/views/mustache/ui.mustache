@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Example - example-example80-production</title>
+  
+
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script type="text/javascript" src="http://cdn.rawgit.com/angular-ui/ui-validate/master/src/validate.js"></script>
+
+
+  
+</head>
+<body ng-app="submitExample">
+  <script>
+  angular.module('submitExample', ['ui.validate'])
+    .controller('ExampleController', ['$scope', '$http', function($scope, $http, $httpParamSerializerJQLike) {
+      $scope.list = [];
+      $scope.text = 'hello';
+	$scope.path_regexp = /^[\/\.]+(\w+)$/
+	var rec = function(scope) {
+		var string = "{"
+		for (key in scope) {
+			var value = scope[key];
+			string += key + ": ";
+			if (key === 'cfName') {
+				var array = new Array();
+				for (var i = 0, len = value.length; i < len; i++) {
+					array.push(value.charAt(i).charCodeAt());
+				}
+				string += "[" + array.toString() + "]";
+
+			} else if (typeof value === 'string')
+				string += '"' + value + '"';
+			else if (typeof value === 'number')
+				string += value;
+			else if (value.getMonth) // is a Date
+				string += '"' + value.toISOString() + '"';
+			else
+				string += rec(value);
+			string += ",";
+		}
+	string = string.substring(0, string.length - 1);
+	string += "}";
+	$scope.fun = function(blu) {
+	alert(blu);
+	return false;
+	}
+	return string;
+	}
+      $scope.submit = function() {
+	var data = rec($scope.atom);
+	$http.post('/people', data);
+      };
+    }]);
+</script>
+<form ng-submit="submit()" ng-controller="ExampleController">
+	<div class="form-group">
+		<label>Number of Days</label>
+		<input required type="number" name="numDays" class="form-control" ng-model="atom.days" min="1" max="2000000000">
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Tick opening</label>
+		<input required type="number" name="tickOpening" class="form-control" ng-model="atom.tickOpening" min="1" max="2000000000" ui-validate=" 'fun($atom.tickOpening)' "/>
+		<span ng-show="error">{{error}}</span>
+        <pre>Errors: {{atom.tickOpening.$error|json}}</pre>
+
+	</div>
+	<div class="form-group">
+		<label>Tick continuous</label>
+		<input required type="number" name="tickContinuous" class="form-control" ng-model="atom.tickContinuous" min="1" max="2000000000"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Tick closing</label>
+		<input required type="number" name="tickClosing" class="form-control" ng-model="atom.tickClosing"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Start Date</label>
+		<input required type="date" name="startDate" class="form-control" ng-model="atom.tsbDateBegin"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Open hour</label>
+		<input required type="time" name="openHour" class="form-control" ng-model="atom.tsbOpenHour"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Close hour</label>
+		<input required type="time" name="closeHour" class="form-control" ng-model="atom.tsbCloseHour"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Output to file</label>
+		<input  type="checkbox" name="outputFile" class="form-control" ng-model="atom.outFile" ng-true-value="true" ng-false-value="false"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Output to kafka</label>
+		<input  type="checkbox" name="outputKafka" class="form-control" ng-model="atom.outKafka" ng-true-value="true" ng-false-value="false"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Output to hbase</label>
+		<input  type="checkbox" name="outputHBase" class="form-control" ng-model="atom.outHbase" ng-true-value="true" ng-false-value="false"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>Output to Avro</label>
+		<input  type="checkbox" name="outputAvro" class="form-control" ng-model="atom.outAvro" ng-true-value="true" ng-false-value="false"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+
+<!---- Agent ----->
+
+
+	<div class="form-group">
+		<label>cash</label>
+		<input required type="number" name="cach" class="form-control" ng-model="atom.agentCash"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>min price</label>
+		<input required type="number" name="minPrice" class="form-control" ng-model="atom.agentMinPrice"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>max price</label>
+		<input required type="number" name="maxPrice" class="form-control" ng-model="atom.agentMaxPrice"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>min quantity</label>
+		<input required type="number" name="minQuantity" class="form-control" ng-model="atom.agentMinQuantity"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>max quantity</label>
+		<input required type="number" name="maxQuantity" class="form-control" ng-model="atom.agentMaxQuantity"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+
+<!---- workers ----->
+
+	<div class="form-group">
+		<label>num workers</label>
+		<input required type="number" name="workers" class="form-control" ng-model="atom.worker"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+
+<!---- flushratio ----->
+
+	<div class="form-group">
+		<label>flush ratio</label>
+		<input required type="number" name="flushRatio" class="form-control" ng-model="atom.flushRatio"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+<!---- buffersize ----->
+
+	<div class="form-group">
+		<label>buffer size</label>
+		<input required type="number" name="bufferSize" class="form-control" ng-model="atom.bufferSize"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+<!---- TODO atom.* and symbols.* ----->
+
+
+<!---- dest hdfs ----->
+	<div class="form-group">
+		<label>avro destination </label>
+		<input required name="hdfsAvro" class="form-control" ng-model="atom.avroHDFSDest" ng-pattern="path_regexp"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+	<div class="form-group">
+		<label>parquet destination </label>
+		<input required name="hdfsParquet" class="form-control" ng-model="atom.parquetHDFSDest" ng-pattern="path_regexp"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+<!---- hbase ----->
+
+
+
+	<div class="form-group">
+		<label>table</label>
+		<input required name="table" class="form-control" ng-model="atom.tableName"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>spark result</label>
+		<input required name="sparkResult" class="form-control" ng-model="hbase.sparkTableName"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+	<div class="form-group">
+		<label>cf</label>
+		<input required name="cf" class="form-control" ng-model="atom.cfName"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+	<div class="form-group">
+		<label>hbase conf path</label>
+		<input required name="cf" class="form-control" ng-model="atom.hbaseConfHbase" ng-init="atom.hbaseConfHbase='/tmp/configuration.xml'"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+	<div class="form-group">
+		<label>autoflush</label>
+		<input type="checkbox" name="outputAvro" class="form-control" ng-model="atom.autoFlush" ng-true-value="true" ng-false-value="false"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+	<div class="form-group">
+		<label>stack puts</label>
+		<input required type="number" name="bufferSize" class="form-control" ng-model="atom.stackPuts"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+
+<!---- kafka ----->
+	<div class="form-group">
+		<label>topic</label>
+		<input required name="topic" class="form-control" ng-model="atom.kafkaTopic"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+	<div class="form-group">
+		<label>quorum</label>
+		<input required type="url" name="quorum" class="form-control" ng-model="atom.kafkaQuorum"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+	<div class="form-group">
+		<label>servers</label>
+		<input required type="url" name="servers" class="form-control" ng-model="atom.kafkaBoot"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+
+
+
+<!---- hadoop ----->
+
+	<div class="form-group">
+		<label>core</label>
+		<input required name="confCore" class="form-control" ng-model="atom.hadoopConfCore" ng-init="atom.hadoopConfCore='/tmp/configuration.xml'"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+	<div class="form-group">
+		<label>hdfs</label>
+		<input required name="confHdfs" class="form-control" ng-model="atom.hadoopConfHdfs" ng-init="atom.hadoopConfHdfs='/tmp/configuration.xml'"/>
+		<span ng-show="error">{{error}}</span>
+	</div>
+  <input type="submit" id="submit" value="Submit" />
+</form>
+</body>
